@@ -6,7 +6,7 @@
     "url": "git+https://github.com/tedyno/cz-qr-payment.git"
   },
   "author": "tedyno <vanicekdave@gmail.com>",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A simple CZ (SPAYD) payment QR Code generator based on qrcode-generator",
   "license": "MIT",
   "main": "dist/index.js",
