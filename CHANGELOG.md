@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased] - yyyy-mm-dd
 
+### Changed
+
+- Package renamed to **`qrplatba`** (published under the new, unscoped name). The previous `@tedyno/cz-qr-payment` package is deprecated and points here; the API is unchanged.
+
 ### Added
 
 - Dual **ESM + CommonJS** build with an `exports` map and `sideEffects: false` for better tree-shaking and native ESM support

@@ -1,15 +1,15 @@
 <div align="center">
 
-# @tedyno/cz-qr-payment
+# qrplatba
 
 **Generate Czech 🇨🇿 SPAYD payment QR codes — from an account number to a scannable code in one call.**
 
-[![npm version](https://img.shields.io/npm/v/@tedyno/cz-qr-payment.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/@tedyno/cz-qr-payment) [![bundle size](https://img.shields.io/bundlephobia/minzip/@tedyno/cz-qr-payment?label=min%2Bgzip)](https://bundlephobia.com/package/@tedyno/cz-qr-payment) [![types](https://img.shields.io/npm/types/@tedyno/cz-qr-payment.svg?logo=typescript)](https://www.typescriptlang.org/) [![license](https://img.shields.io/npm/l/@tedyno/cz-qr-payment.svg)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/qrplatba.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/qrplatba) [![bundle size](https://img.shields.io/bundlephobia/minzip/qrplatba?label=min%2Bgzip)](https://bundlephobia.com/package/qrplatba) [![types](https://img.shields.io/npm/types/qrplatba.svg?logo=typescript)](https://www.typescriptlang.org/) [![license](https://img.shields.io/npm/l/qrplatba.svg)](./LICENSE)
 
 ### [▶ Live demo](https://tedyno.github.io/cz-qr-payment/)
 
 <a href="https://tedyno.github.io/cz-qr-payment/">
-  <img src="https://raw.githubusercontent.com/tedyno/cz-qr-payment/main/docs/demo.png" alt="cz-qr-payment demo" width="640" />
+  <img src="https://raw.githubusercontent.com/tedyno/cz-qr-payment/main/docs/demo.png" alt="qrplatba demo" width="640" />
 </a>
 
 </div>
@@ -28,17 +28,17 @@
 ## Installation
 
 ```bash
-npm install @tedyno/cz-qr-payment
+npm install qrplatba
 # or
-yarn add @tedyno/cz-qr-payment
+yarn add qrplatba
 # or
-bun add @tedyno/cz-qr-payment
+bun add qrplatba
 ```
 
 ## Quick start
 
 ```js
-import { QRPayment } from '@tedyno/cz-qr-payment';
+import { QRPayment } from 'qrplatba';
 
 const qrPayment = new QRPayment(322.4, '19-2000145399/0800', {
   VS: '126303', // Variable symbol
@@ -67,11 +67,7 @@ const qrPayment = new QRPayment(322.4, {
 If you don't need the instance, the one-shot helpers do the same in a single call:
 
 ```js
-import {
-  createQrPaymentSvg,
-  createQrPaymentDataUrl,
-  createQrPaymentContent,
-} from '@tedyno/cz-qr-payment';
+import { createQrPaymentSvg, createQrPaymentDataUrl, createQrPaymentContent } from 'qrplatba';
 
 createQrPaymentSvg(322.4, '19-2000145399/0800', { VS: '126303' }); // SVG string
 createQrPaymentDataUrl(322.4, '19-2000145399/0800', { VS: '126303' }); // data URL
@@ -108,7 +104,7 @@ createQrPaymentContent(322.4, '19-2000145399/0800', { VS: '126303' }); // raw SP
 Invalid input throws a `ValidationError` (exported from the package) with a descriptive message:
 
 ```js
-import { ValidationError } from '@tedyno/cz-qr-payment';
+import { ValidationError } from 'qrplatba';
 
 try {
   createQrPaymentContent(100, '19-2000145399/0800', { DT: '2024-01-01' });

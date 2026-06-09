@@ -1,5 +1,5 @@
 {
-  "name": "@tedyno/cz-qr-payment",
+  "name": "qrplatba",
   "type": "commonjs",
   "repository": {
     "type": "git",
@@ -52,6 +52,7 @@
     "cz",
     "spayd",
     "iban",
-    "qr-platba"
+    "qr-platba",
+    "qrplatba"
   ]
 }
