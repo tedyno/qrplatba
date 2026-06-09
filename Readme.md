@@ -4,7 +4,7 @@
 
 **Generate Czech 🇨🇿 SPAYD payment QR codes — from an account number to a scannable code in one call.**
 
-[![npm version](https://img.shields.io/npm/v/qrplatba.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/qrplatba) [![bundle size](https://img.shields.io/bundlephobia/minzip/qrplatba?label=min%2Bgzip)](https://bundlephobia.com/package/qrplatba) [![types](https://img.shields.io/npm/types/qrplatba.svg?logo=typescript)](https://www.typescriptlang.org/) [![license](https://img.shields.io/npm/l/qrplatba.svg)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/qrplatba.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/qrplatba) [![npm downloads](https://img.shields.io/npm/dm/qrplatba.svg)](https://www.npmjs.com/package/qrplatba) [![CI](https://img.shields.io/github/actions/workflow/status/tedyno/qrplatba/ci.yml?branch=main&label=CI)](https://github.com/tedyno/qrplatba/actions/workflows/ci.yml) [![bundle size](https://img.shields.io/bundlephobia/minzip/qrplatba?label=min%2Bgzip)](https://bundlephobia.com/package/qrplatba) [![types](https://img.shields.io/npm/types/qrplatba.svg?logo=typescript)](https://www.typescriptlang.org/) [![license](https://img.shields.io/npm/l/qrplatba.svg)](./LICENSE)
 
 ### [▶ Live demo](https://tedyno.github.io/qrplatba/)
 

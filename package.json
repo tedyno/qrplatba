@@ -47,11 +47,15 @@
   "homepage": "https://github.com/tedyno/qrplatba#readme",
   "keywords": [
     "qr",
+    "qr-code",
+    "qrcode",
     "payment",
+    "payments",
     "czech",
     "cz",
     "spayd",
     "iban",
+    "platba",
     "qr-platba",
     "qrplatba"
   ]
