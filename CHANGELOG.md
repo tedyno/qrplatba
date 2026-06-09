@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased] - yyyy-mm-dd
 
+### Changed
+
+- Test runner switched from Jest to the built-in `bun test`; dropped the `jest`, `ts-jest`, `@types/jest` and `ts-node` dev dependencies
+
+## [2.0.0] - 2026-06-10
+
 ### Added
 
 - `currency` option (`CC`), defaulting to `CZK`, validated as a 3-letter ISO 4217 code

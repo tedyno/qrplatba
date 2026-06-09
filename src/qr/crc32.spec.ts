@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'bun:test';
 import { crc32Hex } from './crc32';
 
 describe('crc32Hex', () => {

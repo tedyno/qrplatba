@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'bun:test';
 import { QRPayment } from './QRPayment';
 import { ValidationError } from './validation/ValidationError';
 

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'bun:test';
 import { generateQrContent } from './qr';
 import { Payment, PaymentOptions } from '../index';
 

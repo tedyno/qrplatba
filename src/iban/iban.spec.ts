@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'bun:test';
 import { calculateCheckDigits, getIban } from './iban';
 
 describe('iban', () => {
