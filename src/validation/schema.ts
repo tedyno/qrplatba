@@ -1,5 +1,4 @@
-import { Account } from '../index';
-import { z } from 'zod';
+import { Account, Payment, PaymentOptions } from '../index';
 import {
   bankAccountBankCodePattern,
   bankAccountNumberPattern,
@@ -15,83 +14,106 @@ import {
   transformNumber,
   transformPrefix,
 } from './transformators';
+import { ValidationError } from './ValidationError';
 
-export const BankAccountStringSchema = z
-  .string()
-  .regex(bankAccountStringPattern)
-  .transform((bankAccount: string): Account => transformBankAccountString(bankAccount));
+export const parseBankAccountString = (bankAccount: string): Account => {
+  if (!bankAccountStringPattern.test(bankAccount)) {
+    throw new ValidationError('Bank account string is invalid');
+  }
 
-export const PaymentOptionsSchema = z.object({
-  message: z
-    .string()
-    .optional()
-    .refine(
-      (message: string | undefined) => !message || message.length <= 60,
-      'Message maximum length is 60',
-    ),
-  currency: z
-    .string()
-    .optional()
-    .refine(
-      (val: string | undefined) => !val || currencyPattern.test(val),
-      'Currency has to be a 3-letter ISO 4217 code (e.g. CZK)',
-    ),
-  crc32: z.boolean().optional(),
-  DT: z
-    .string()
-    .optional()
-    .refine(
-      (date: string | undefined) => !date || isYYYYMMDDDate(date),
-      'DT has to be a valid date in YYYYMMDD format',
-    ),
-  VS: z
-    .string()
-    .optional()
-    .refine(
-      (val: string | undefined) => !val || (val.length <= 10 && isNumeric(val)),
-      'VS should be empty or contain only digits (maximum length is 10)',
-    ),
-  SS: z
-    .string()
-    .optional()
-    .refine(
-      (val: string | undefined) => !val || (val.length <= 10 && isNumeric(val)),
-      'SS should be empty or contain only digits (maximum length is 10)',
-    ),
-  KS: z
-    .string()
-    .optional()
-    .refine(
-      (val: string | undefined) => !val || (val.length <= 10 && isNumeric(val)),
-      'KS should be empty or contain only digits (maximum length is 10)',
-    ),
-  URL: z
-    .string()
-    .optional()
-    .refine((val: string | undefined) => !val || val.length <= 140, 'Maximum length is 140'),
-});
+  return transformBankAccountString(bankAccount);
+};
 
-export const PaymentSchema = z.object({
-  amount: z
-    .number()
-    .min(0, 'Minimum value is 0')
-    .transform((amount: number) => amount.toFixed(2))
-    .refine((val: string) => val.length <= 10, 'Invalid amount')
-    .nullable(),
-  currency: z.string().default('CZK'),
-});
+export const parseAccount = (account: Account): Account => {
+  const prefix = account.prefix || '';
 
-export const AccountSchema = z
-  .object({
-    prefix: z.string().regex(bankAccountPrefixPattern, 'Account number prefix is invalid'),
-    number: z.string().regex(bankAccountNumberPattern, 'Account number is invalid'),
-    bankCode: z.string().regex(bankAccountBankCodePattern, 'BankCode is invalid'),
-  })
-  .transform(
-    (data: Account): Account => ({
-      ...data,
-      prefix: transformPrefix(data.prefix || ''),
-      number: transformNumber(data.number),
-      bankCode: transformBankCode(data.bankCode),
-    }),
-  );
+  if (!bankAccountPrefixPattern.test(prefix)) {
+    throw new ValidationError('Account number prefix is invalid');
+  }
+
+  if (!bankAccountNumberPattern.test(account.number)) {
+    throw new ValidationError('Account number is invalid');
+  }
+
+  if (!bankAccountBankCodePattern.test(account.bankCode)) {
+    throw new ValidationError('BankCode is invalid');
+  }
+
+  return {
+    prefix: transformPrefix(prefix),
+    number: transformNumber(account.number),
+    bankCode: transformBankCode(account.bankCode),
+  };
+};
+
+export const parsePaymentOptions = (options: PaymentOptions): PaymentOptions => {
+  const { message, currency, DT, VS, SS, KS, URL, crc32 } = options;
+
+  if (message !== undefined && message.length > 60) {
+    throw new ValidationError('Message maximum length is 60');
+  }
+
+  if (currency !== undefined && !currencyPattern.test(currency)) {
+    throw new ValidationError('Currency has to be a 3-letter ISO 4217 code (e.g. CZK)');
+  }
+
+  if (DT !== undefined && !isYYYYMMDDDate(DT)) {
+    throw new ValidationError('DT has to be a valid date in YYYYMMDD format');
+  }
+
+  for (const [name, value] of [
+    ['VS', VS],
+    ['SS', SS],
+    ['KS', KS],
+  ] as const) {
+    if (value !== undefined && !(value.length <= 10 && isNumeric(value))) {
+      throw new ValidationError(
+        `${name} should be empty or contain only digits (maximum length is 10)`,
+      );
+    }
+  }
+
+  if (URL !== undefined && URL.length > 140) {
+    throw new ValidationError('Maximum length is 140');
+  }
+
+  const result: PaymentOptions = {};
+
+  if (message !== undefined) result.message = message;
+  if (currency !== undefined) result.currency = currency;
+  if (DT !== undefined) result.DT = DT;
+  if (VS !== undefined) result.VS = VS;
+  if (SS !== undefined) result.SS = SS;
+  if (KS !== undefined) result.KS = KS;
+  if (URL !== undefined) result.URL = URL;
+  if (crc32 !== undefined) result.crc32 = crc32;
+
+  return result;
+};
+
+export const parsePayment = (input: { amount: number | null; currency?: string }): Payment => {
+  let amount: string | null = null;
+
+  if (input.amount !== null) {
+    if (typeof input.amount !== 'number' || Number.isNaN(input.amount)) {
+      throw new ValidationError('Invalid amount');
+    }
+
+    if (input.amount < 0) {
+      throw new ValidationError('Minimum value is 0');
+    }
+
+    const formatted = input.amount.toFixed(2);
+
+    if (formatted.length > 10) {
+      throw new ValidationError('Invalid amount');
+    }
+
+    amount = formatted;
+  }
+
+  return {
+    amount,
+    currency: input.currency ?? 'CZK',
+  };
+};

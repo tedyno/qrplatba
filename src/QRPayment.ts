@@ -1,8 +1,8 @@
 import {
-  AccountSchema,
-  BankAccountStringSchema,
-  PaymentOptionsSchema,
-  PaymentSchema,
+  parseAccount,
+  parseBankAccountString,
+  parsePayment,
+  parsePaymentOptions,
 } from './validation/schema';
 import { createQrCode, createQrCodeDataUrl, generateQrContent } from './qr/qr';
 import {
@@ -26,13 +26,13 @@ export class QRPayment {
     paymentOptions: PaymentOptionsInput = {},
   ) {
     if (typeof bankAccount === 'string') {
-      this.account = BankAccountStringSchema.parse(bankAccount);
+      this.account = parseBankAccountString(bankAccount);
     } else {
-      this.account = AccountSchema.parse(bankAccount);
+      this.account = parseAccount(bankAccount);
     }
 
-    this.paymentOptions = PaymentOptionsSchema.parse({ ...this.paymentOptions, ...paymentOptions });
-    this.payment = PaymentSchema.parse({ amount, currency: this.paymentOptions.currency });
+    this.paymentOptions = parsePaymentOptions(paymentOptions);
+    this.payment = parsePayment({ amount, currency: this.paymentOptions.currency });
   }
 
   public getSvg(): string {

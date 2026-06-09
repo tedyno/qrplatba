@@ -12,15 +12,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `crc32` option to append a SPAYD `CRC32` checksum field
 - `getDataUrl()` / `createQrPaymentDataUrl()` to render the QR code as a data URL
 - `createQrPaymentContent()` to obtain the raw SPAYD string
+- `ValidationError` is exported and thrown for all invalid input
 
 ### Changed
 
+- **BREAKING**: validation no longer throws `ZodError`; it throws the exported `ValidationError` instead
 - `MSG` and `X-URL` values are now percent-encoded (`*` → `%2A`, `%` → `%25`) instead of rejecting `*`
 - Package now ships only `dist/` via the `files` whitelist; `dist/` is no longer committed and is rebuilt on publish
 
 ### Removed
 
 - `cdigit` dependency; IBAN check digits are now computed with a small inline mod-97 routine
+- `zod` dependency; validation is now done with small hand-written checks (drops ~85% of the package's install footprint)
 
 ## [1.3.0] - 2026-06-09
 

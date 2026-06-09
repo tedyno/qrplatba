@@ -50,3 +50,4 @@ export interface PaymentOptions {
 }
 
 export * from './QRPayment';
+export { ValidationError } from './validation/ValidationError';

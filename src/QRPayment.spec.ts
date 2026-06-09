@@ -1,5 +1,5 @@
 import { QRPayment } from './QRPayment';
-import { ZodError } from 'zod';
+import { ValidationError } from './validation/ValidationError';
 
 describe('QRPayment', () => {
   describe('creates QRPayment instance', () => {
@@ -190,25 +190,25 @@ describe('QRPayment', () => {
     it('invalid amount', () => {
       expect(() => {
         new QRPayment(10000000, '19-2000145399/0800');
-      }).toThrow(ZodError);
+      }).toThrow(ValidationError);
     });
 
     it('invalid bankAccount number', () => {
       expect(() => {
         new QRPayment(100, '19-2000213213145399/0800');
-      }).toThrow(ZodError);
+      }).toThrow(ValidationError);
     });
 
     it('invalid bankAccount prefix', () => {
       expect(() => {
         new QRPayment(100, '12312319-2000145399/0800');
-      }).toThrow(ZodError);
+      }).toThrow(ValidationError);
     });
 
     it('invalid bankAccount bankCode', () => {
       expect(() => {
         new QRPayment(100, '19-2000145399/08000');
-      }).toThrow(ZodError);
+      }).toThrow(ValidationError);
     });
 
     it('invalid currency code', () => {
@@ -224,7 +224,7 @@ describe('QRPayment', () => {
             currency: 'czk',
           },
         );
-      }).toThrow(ZodError);
+      }).toThrow(ValidationError);
     });
 
     it('DT is not in YYYYMMDD format', () => {
@@ -240,7 +240,7 @@ describe('QRPayment', () => {
             DT: 'dsads',
           },
         );
-      }).toThrow(ZodError);
+      }).toThrow(ValidationError);
     });
 
     it('DT is an impossible calendar date', () => {
@@ -256,7 +256,7 @@ describe('QRPayment', () => {
             DT: '20230231',
           },
         );
-      }).toThrow(ZodError);
+      }).toThrow(ValidationError);
     });
 
     it('Message is too long', () => {
@@ -272,7 +272,7 @@ describe('QRPayment', () => {
             message: 'a'.repeat(61),
           },
         );
-      }).toThrow(ZodError);
+      }).toThrow(ValidationError);
     });
 
     describe('VS', () => {
@@ -289,7 +289,7 @@ describe('QRPayment', () => {
               VS: '123123123123',
             },
           );
-        }).toThrow(ZodError);
+        }).toThrow(ValidationError);
       });
 
       it('is invalid', () => {
@@ -305,7 +305,7 @@ describe('QRPayment', () => {
               VS: 'NaN',
             },
           );
-        }).toThrow(ZodError);
+        }).toThrow(ValidationError);
       });
     });
 
@@ -323,7 +323,7 @@ describe('QRPayment', () => {
               KS: '123123123123',
             },
           );
-        }).toThrow(ZodError);
+        }).toThrow(ValidationError);
       });
 
       it('is invalid', () => {
@@ -339,7 +339,7 @@ describe('QRPayment', () => {
               KS: 'NaN',
             },
           );
-        }).toThrow(ZodError);
+        }).toThrow(ValidationError);
       });
     });
 
@@ -357,7 +357,7 @@ describe('QRPayment', () => {
               SS: '123123123123',
             },
           );
-        }).toThrow(ZodError);
+        }).toThrow(ValidationError);
       });
 
       it('is invalid', () => {
@@ -373,7 +373,7 @@ describe('QRPayment', () => {
               SS: 'NaN',
             },
           );
-        }).toThrow(ZodError);
+        }).toThrow(ValidationError);
       });
     });
 
@@ -391,7 +391,7 @@ describe('QRPayment', () => {
               URL: 'a'.repeat(141),
             },
           );
-        }).toThrow(ZodError);
+        }).toThrow(ValidationError);
       });
     });
   });
