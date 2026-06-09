@@ -3,7 +3,7 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tedyno/cz-qr-payment.git"
+    "url": "git+https://github.com/tedyno/qrplatba.git"
   },
   "author": "tedyno <vanicekdave@gmail.com>",
   "version": "2.1.0",
@@ -42,9 +42,9 @@
     "typescript": "^5.2.2"
   },
   "bugs": {
-    "url": "https://github.com/tedyno/cz-qr-payment/issues"
+    "url": "https://github.com/tedyno/qrplatba/issues"
   },
-  "homepage": "https://github.com/tedyno/cz-qr-payment#readme",
+  "homepage": "https://github.com/tedyno/qrplatba#readme",
   "keywords": [
     "qr",
     "payment",

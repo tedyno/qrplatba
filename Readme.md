@@ -6,10 +6,10 @@
 
 [![npm version](https://img.shields.io/npm/v/qrplatba.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/qrplatba) [![bundle size](https://img.shields.io/bundlephobia/minzip/qrplatba?label=min%2Bgzip)](https://bundlephobia.com/package/qrplatba) [![types](https://img.shields.io/npm/types/qrplatba.svg?logo=typescript)](https://www.typescriptlang.org/) [![license](https://img.shields.io/npm/l/qrplatba.svg)](./LICENSE)
 
-### [▶ Live demo](https://tedyno.github.io/cz-qr-payment/)
+### [▶ Live demo](https://tedyno.github.io/qrplatba/)
 
-<a href="https://tedyno.github.io/cz-qr-payment/">
-  <img src="https://raw.githubusercontent.com/tedyno/cz-qr-payment/main/docs/demo.png" alt="qrplatba demo" width="640" />
+<a href="https://tedyno.github.io/qrplatba/">
+  <img src="https://raw.githubusercontent.com/tedyno/qrplatba/main/docs/demo.png" alt="qrplatba demo" width="640" />
 </a>
 
 </div>
@@ -134,7 +134,7 @@ The live demo lives in [`docs/`](./docs) and is published to GitHub Pages from t
 
 ## Issues
 
-Found a problem or have a suggestion? Please [open an issue](https://github.com/tedyno/cz-qr-payment/issues).
+Found a problem or have a suggestion? Please [open an issue](https://github.com/tedyno/qrplatba/issues).
 
 ## License
 
