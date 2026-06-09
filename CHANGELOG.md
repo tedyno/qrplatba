@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `MSG` and `X-URL` values are now percent-encoded (`*` → `%2A`, `%` → `%25`) instead of rejecting `*`
 - Package now ships only `dist/` via the `files` whitelist; `dist/` is no longer committed and is rebuilt on publish
 
+### Removed
+
+- `cdigit` dependency; IBAN check digits are now computed with a small inline mod-97 routine
+
 ## [1.3.0] - 2026-06-09
 
 ### Fixed
