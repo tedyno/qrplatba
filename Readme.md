@@ -8,6 +8,10 @@
 
 ### [▶ Live demo](https://tedyno.github.io/cz-qr-payment/)
 
+<a href="https://tedyno.github.io/cz-qr-payment/">
+  <img src="https://raw.githubusercontent.com/tedyno/cz-qr-payment/main/docs/demo.png" alt="cz-qr-payment demo" width="640" />
+</a>
+
 </div>
 
 ---

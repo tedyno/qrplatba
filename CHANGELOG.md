@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased] - yyyy-mm-dd
 
+### Added
+
+- Dual **ESM + CommonJS** build with an `exports` map and `sideEffects: false` for better tree-shaking and native ESM support
+- Continuous-integration workflow running lint, tests and build on every push and pull request
+- Dependabot configuration for npm and GitHub Actions updates
+
+## [2.0.1] - 2026-06-10
+
 ### Changed
 
 - Test runner switched from Jest to the built-in `bun test`; dropped the `jest`, `ts-jest`, `@types/jest` and `ts-node` dev dependencies
