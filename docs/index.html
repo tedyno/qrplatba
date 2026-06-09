@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@tedyno/cz-qr-payment — demo</title>
+    <style>
+      :root {
+        --bg: #0f1117;
+        --card: #1a1d27;
+        --border: #2a2e3a;
+        --text: #e6e8ee;
+        --muted: #9aa0ae;
+        --accent: #4f8cff;
+        --error: #ff6b6b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 4rem;
+      }
+      header h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.6rem;
+      }
+      header p {
+        margin: 0 0 2rem;
+        color: var(--muted);
+      }
+      header a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      @media (max-width: 680px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+      }
+      label {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin: 0.75rem 0 0.25rem;
+      }
+      label:first-child {
+        margin-top: 0;
+      }
+      input {
+        width: 100%;
+        padding: 0.55rem 0.7rem;
+        background: #0f1117;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 0.95rem;
+        font-family: inherit;
+      }
+      input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+      .qr {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border-radius: 12px;
+        padding: 1rem;
+        aspect-ratio: 1;
+        min-height: 240px;
+      }
+      .qr svg {
+        width: 100%;
+        height: 100%;
+      }
+      .spayd {
+        margin-top: 1rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.78rem;
+        color: var(--muted);
+        word-break: break-all;
+        background: #0f1117;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.7rem;
+      }
+      .error {
+        color: var(--error);
+        font-size: 0.85rem;
+        min-height: 1.2rem;
+        margin-top: 0.75rem;
+      }
+      footer {
+        margin-top: 2.5rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>@tedyno/cz-qr-payment</h1>
+        <p>
+          Generátor SPAYD QR plateb pro české účty.
+          <a href="https://www.npmjs.com/package/@tedyno/cz-qr-payment">npm</a> ·
+          <a href="https://github.com/tedyno/cz-qr-payment">GitHub</a>
+        </p>
+      </header>
+
+      <div class="grid">
+        <section class="card">
+          <label for="account">Číslo účtu</label>
+          <input id="account" value="19-2000145399/0800" />
+
+          <div class="row">
+            <div>
+              <label for="amount">Částka</label>
+              <input id="amount" type="number" step="0.01" value="322.40" />
+            </div>
+            <div>
+              <label for="currency">Měna</label>
+              <input id="currency" value="CZK" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="vs">Variabilní symbol</label>
+              <input id="vs" value="126303" />
+            </div>
+            <div>
+              <label for="dt">Datum splatnosti (YYYYMMDD)</label>
+              <input id="dt" placeholder="20260630" />
+            </div>
+          </div>
+
+          <label for="message">Zpráva pro příjemce</label>
+          <input id="message" value="Platba za objednávku #126303" />
+
+          <div class="error" id="error"></div>
+        </section>
+
+        <section class="card">
+          <div class="qr" id="qr"></div>
+          <div class="spayd" id="spayd"></div>
+        </section>
+      </div>
+
+      <footer>
+        Knihovna se načítá přímo z
+        <a href="https://esm.sh/@tedyno/cz-qr-payment@2.0.0">esm.sh</a> — žádný build krok.
+      </footer>
+    </div>
+
+    <script type="module">
+      import {
+        createQrPaymentSvg,
+        createQrPaymentContent,
+        ValidationError,
+      } from 'https://esm.sh/@tedyno/cz-qr-payment@2.0.0';
+
+      const fields = ['account', 'amount', 'currency', 'vs', 'dt', 'message'].reduce((acc, id) => {
+        acc[id] = document.getElementById(id);
+        return acc;
+      }, {});
+      const qrEl = document.getElementById('qr');
+      const spaydEl = document.getElementById('spayd');
+      const errorEl = document.getElementById('error');
+
+      function render() {
+        const amountRaw = fields.amount.value.trim();
+        const amount = amountRaw === '' ? null : Number(amountRaw);
+
+        const options = {};
+        if (fields.currency.value.trim())
+          options.currency = fields.currency.value.trim().toUpperCase();
+        if (fields.vs.value.trim()) options.VS = fields.vs.value.trim();
+        if (fields.dt.value.trim()) options.DT = fields.dt.value.trim();
+        if (fields.message.value.trim()) options.message = fields.message.value.trim();
+
+        try {
+          const svg = createQrPaymentSvg(amount, fields.account.value.trim(), options);
+          const content = createQrPaymentContent(amount, fields.account.value.trim(), options);
+          qrEl.innerHTML = svg;
+          spaydEl.textContent = content;
+          errorEl.textContent = '';
+        } catch (err) {
+          qrEl.innerHTML = '';
+          spaydEl.textContent = '';
+          errorEl.textContent =
+            err instanceof ValidationError
+              ? err.message
+              : String(err && err.message ? err.message : err);
+        }
+      }
+
+      Object.values(fields).forEach(el => el.addEventListener('input', render));
+      render();
+    </script>
+  </body>
+</html>
