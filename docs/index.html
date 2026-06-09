@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@tedyno/cz-qr-payment — demo</title>
+    <title>qrplatba — demo</title>
     <style>
       :root {
         --bg: #0f1117;
@@ -136,10 +136,10 @@
   <body>
     <div class="wrap">
       <header>
-        <h1>@tedyno/cz-qr-payment</h1>
+        <h1>qrplatba</h1>
         <p>
           Generátor SPAYD QR plateb pro české účty.
-          <a href="https://www.npmjs.com/package/@tedyno/cz-qr-payment">npm</a> ·
+          <a href="https://www.npmjs.com/package/qrplatba">npm</a> ·
           <a href="https://github.com/tedyno/cz-qr-payment">GitHub</a>
         </p>
       </header>
@@ -185,7 +185,7 @@
 
       <footer>
         Knihovna se načítá přímo z
-        <a href="https://esm.sh/@tedyno/cz-qr-payment@2">esm.sh</a> — žádný build krok.
+        <a href="https://esm.sh/qrplatba@2">esm.sh</a> — žádný build krok.
       </footer>
     </div>
 
@@ -194,7 +194,7 @@
         createQrPaymentSvg,
         createQrPaymentContent,
         ValidationError,
-      } from 'https://esm.sh/@tedyno/cz-qr-payment@2';
+      } from 'https://esm.sh/qrplatba@2';
 
       const fields = ['account', 'amount', 'currency', 'vs', 'dt', 'message'].reduce((acc, id) => {
         acc[id] = document.getElementById(id);
