@@ -2,7 +2,7 @@ import { Account, Payment } from '../index';
 import { z } from 'zod';
 export declare const BankAccountStringSchema: z.ZodEffects<z.ZodString, Account, string>;
 export declare const PaymentOptionsSchema: z.ZodObject<{
-    message: z.ZodEffects<z.ZodOptional<z.ZodString>, string | undefined, string | undefined>;
+    message: z.ZodEffects<z.ZodEffects<z.ZodOptional<z.ZodString>, string | undefined, string | undefined>, string | undefined, string | undefined>;
     DT: z.ZodEffects<z.ZodOptional<z.ZodString>, string | undefined, string | undefined>;
     VS: z.ZodEffects<z.ZodOptional<z.ZodString>, string | undefined, string | undefined>;
     SS: z.ZodEffects<z.ZodOptional<z.ZodString>, string | undefined, string | undefined>;

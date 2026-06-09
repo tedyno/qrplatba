@@ -5,8 +5,8 @@ import {
   bankAccountNumberPattern,
   bankAccountPrefixPattern,
   bankAccountStringPattern,
-  isISO8601Date,
   isNumeric,
+  isYYYYMMDDDate,
 } from './validators';
 import {
   transformBankAccountString,
@@ -27,13 +27,17 @@ export const PaymentOptionsSchema = z.object({
     .refine(
       (message: string | undefined) => !message || !message.includes('*'),
       "Message cannot contain the '*' character",
+    )
+    .refine(
+      (message: string | undefined) => !message || message.length <= 60,
+      'Message maximum length is 60',
     ),
   DT: z
     .string()
     .optional()
     .refine(
-      (date: string | undefined) => !date || isISO8601Date(date),
-      'DT has to be a valid ISO 8601 date',
+      (date: string | undefined) => !date || isYYYYMMDDDate(date),
+      'DT has to be a valid date in YYYYMMDD format',
     ),
   VS: z
     .string()

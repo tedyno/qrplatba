@@ -12,11 +12,12 @@ exports.PaymentOptionsSchema = zod_1.z.object({
     message: zod_1.z
         .string()
         .optional()
-        .refine((message) => !message || !message.includes('*'), "Message cannot contain the '*' character"),
+        .refine((message) => !message || !message.includes('*'), "Message cannot contain the '*' character")
+        .refine((message) => !message || message.length <= 60, 'Message maximum length is 60'),
     DT: zod_1.z
         .string()
         .optional()
-        .refine((date) => !date || (0, validators_1.isISO8601Date)(date), 'DT has to be a valid ISO 8601 date'),
+        .refine((date) => !date || (0, validators_1.isYYYYMMDDDate)(date), 'DT has to be a valid date in YYYYMMDD format'),
     VS: zod_1.z
         .string()
         .optional()

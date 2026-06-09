@@ -128,6 +128,16 @@ describe('QRPayment', () => {
         'SPD*1.0*ACC:CZ6508000000192000145399*CC:CZK*AM:0.00*MSG:Payment for order #126303*X-VS:126303',
       );
     });
+
+    it('with due date', () => {
+      const qrPayment = new QRPayment(156.9, '19-2000145399/0800', {
+        DT: '20230408',
+      });
+
+      expect(qrPayment.getQrContent()).toEqual(
+        'SPD*1.0*ACC:CZ6508000000192000145399*CC:CZK*AM:156.90*DT:20230408',
+      );
+    });
   });
 
   describe('Fails', () => {
@@ -171,7 +181,7 @@ describe('QRPayment', () => {
       }).toThrow(ZodError);
     });
 
-    it('DT is not valid ISO 8601 date', () => {
+    it('DT is not in YYYYMMDD format', () => {
       expect(() => {
         new QRPayment(
           156.9,
@@ -182,6 +192,38 @@ describe('QRPayment', () => {
           },
           {
             DT: 'dsads',
+          },
+        );
+      }).toThrow(ZodError);
+    });
+
+    it('DT is an impossible calendar date', () => {
+      expect(() => {
+        new QRPayment(
+          156.9,
+          {
+            prefix: '19',
+            number: '2000145399',
+            bankCode: '0800',
+          },
+          {
+            DT: '20230231',
+          },
+        );
+      }).toThrow(ZodError);
+    });
+
+    it('Message is too long', () => {
+      expect(() => {
+        new QRPayment(
+          156.9,
+          {
+            prefix: '19',
+            number: '2000145399',
+            bankCode: '0800',
+          },
+          {
+            message: 'a'.repeat(61),
           },
         );
       }).toThrow(ZodError);
