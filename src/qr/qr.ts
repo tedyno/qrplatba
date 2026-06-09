@@ -1,5 +1,13 @@
 import { Payment, PaymentOptions } from '../index';
 import qrcode from 'qrcode-generator';
+import { crc32Hex } from './crc32';
+
+/**
+ * Percent-encodes the `%` and `*` characters so a value cannot break the
+ * `*`-delimited SPAYD structure. Other characters (including diacritics and
+ * URL punctuation such as `:` or `/`) are left intact.
+ */
+const percentEncode = (value: string): string => value.replace(/%/g, '%25').replace(/\*/g, '%2A');
 
 export const generateQrContent = (
   iban: string,
@@ -16,7 +24,7 @@ export const generateQrContent = (
   }
 
   if (options.message) {
-    content.set('MSG', options.message);
+    content.set('MSG', percentEncode(options.message));
   }
 
   if (options.VS) {
@@ -32,20 +40,35 @@ export const generateQrContent = (
   }
 
   if (options.URL) {
-    content.set('X-URL', options.URL);
+    content.set('X-URL', percentEncode(options.URL));
   }
 
   if (options.DT) {
     content.set('DT', options.DT);
   }
 
-  return 'SPD*1.0*' + [...content.entries()].map(([key, value]) => `${key}:${value}`).join('*');
+  const spayd =
+    'SPD*1.0*' + [...content.entries()].map(([key, value]) => `${key}:${value}`).join('*');
+
+  if (options.crc32) {
+    return `${spayd}*CRC32:${crc32Hex(spayd)}`;
+  }
+
+  return spayd;
 };
 
-export const createQrCode = (content: string): string => {
+const buildQrCode = (content: string) => {
   const qr = qrcode(0, 'L');
   qr.addData(content);
   qr.make();
 
-  return qr.createSvgTag({ scalable: true });
+  return qr;
+};
+
+export const createQrCode = (content: string): string => {
+  return buildQrCode(content).createSvgTag({ scalable: true });
+};
+
+export const createQrCodeDataUrl = (content: string): string => {
+  return buildQrCode(content).createDataURL();
 };

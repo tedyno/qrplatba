@@ -4,7 +4,7 @@ import {
   PaymentOptionsSchema,
   PaymentSchema,
 } from './validation/schema';
-import { createQrCode, generateQrContent } from './qr/qr';
+import { createQrCode, createQrCodeDataUrl, generateQrContent } from './qr/qr';
 import {
   Account,
   PaymentOptions,
@@ -32,11 +32,15 @@ export class QRPayment {
     }
 
     this.paymentOptions = PaymentOptionsSchema.parse({ ...this.paymentOptions, ...paymentOptions });
-    this.payment = PaymentSchema.parse({ amount });
+    this.payment = PaymentSchema.parse({ amount, currency: this.paymentOptions.currency });
   }
 
   public getSvg(): string {
     return createQrCode(this.getQrContent());
+  }
+
+  public getDataUrl(): string {
+    return createQrCodeDataUrl(this.getQrContent());
   }
 
   public getQrContent(): string {
@@ -50,4 +54,20 @@ export function createQrPaymentSvg(
   paymentOptions: PaymentOptionsInput = {},
 ): string {
   return new QRPayment(amount, bankAccount, paymentOptions).getSvg();
+}
+
+export function createQrPaymentDataUrl(
+  amount: AmountInput,
+  bankAccount: BankAccountInput,
+  paymentOptions: PaymentOptionsInput = {},
+): string {
+  return new QRPayment(amount, bankAccount, paymentOptions).getDataUrl();
+}
+
+export function createQrPaymentContent(
+  amount: AmountInput,
+  bankAccount: BankAccountInput,
+  paymentOptions: PaymentOptionsInput = {},
+): string {
+  return new QRPayment(amount, bankAccount, paymentOptions).getQrContent();
 }

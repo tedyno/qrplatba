@@ -1,6 +1,0 @@
-node_modules/
-src/
-jest.config.ts
-.idea
-.prettierrc
-tsconfig.json

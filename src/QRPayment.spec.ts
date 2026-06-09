@@ -138,6 +138,52 @@ describe('QRPayment', () => {
         'SPD*1.0*ACC:CZ6508000000192000145399*CC:CZK*AM:156.90*DT:20230408',
       );
     });
+
+    it('with a non-default currency', () => {
+      const qrPayment = new QRPayment(156.9, '19-2000145399/0800', {
+        currency: 'EUR',
+      });
+
+      expect(qrPayment.payment.currency).toEqual('EUR');
+      expect(qrPayment.getQrContent()).toEqual(
+        'SPD*1.0*ACC:CZ6508000000192000145399*CC:EUR*AM:156.90',
+      );
+    });
+
+    it('percent-encodes * and % in the message', () => {
+      const qrPayment = new QRPayment(156.9, '19-2000145399/0800', {
+        message: 'a*b%c',
+      });
+
+      expect(qrPayment.getQrContent()).toEqual(
+        'SPD*1.0*ACC:CZ6508000000192000145399*CC:CZK*AM:156.90*MSG:a%2Ab%25c',
+      );
+    });
+
+    it('appends a CRC32 checksum when requested', () => {
+      const qrPayment = new QRPayment(10, '19-2000145399/0800', {
+        VS: '123',
+        crc32: true,
+      });
+
+      expect(qrPayment.getQrContent()).toEqual(
+        'SPD*1.0*ACC:CZ6508000000192000145399*CC:CZK*AM:10.00*X-VS:123*CRC32:8AEF166C',
+      );
+    });
+  });
+
+  describe('output formats', () => {
+    it('getSvg returns an SVG tag', () => {
+      const qrPayment = new QRPayment(156.9, '19-2000145399/0800');
+
+      expect(qrPayment.getSvg()).toContain('<svg');
+    });
+
+    it('getDataUrl returns a data URL', () => {
+      const qrPayment = new QRPayment(156.9, '19-2000145399/0800');
+
+      expect(qrPayment.getDataUrl()).toMatch(/^data:image\/gif;base64,/);
+    });
   });
 
   describe('Fails', () => {
@@ -165,7 +211,7 @@ describe('QRPayment', () => {
       }).toThrow(ZodError);
     });
 
-    it('Message contains * character', () => {
+    it('invalid currency code', () => {
       expect(() => {
         new QRPayment(
           156.9,
@@ -175,7 +221,7 @@ describe('QRPayment', () => {
             bankCode: '0800',
           },
           {
-            message: 'content * content',
+            currency: 'czk',
           },
         );
       }).toThrow(ZodError);

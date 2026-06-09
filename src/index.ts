@@ -19,7 +19,7 @@ export interface Account {
  * Represents a payment with specific details.
  * @interface Payment
  * @property {string} amount - The payment amount.
- * @property {string} currency - The currency type (limited to 'CZK').
+ * @property {string} currency - The ISO 4217 currency code (defaults to 'CZK').
  */
 export interface Payment {
   readonly amount: string | null;
@@ -29,20 +29,24 @@ export interface Payment {
 /**
  * Represents options for a specific operation.
  * @interface PaymentOptions
- * @property {string | undefined} message - The main message content.
+ * @property {string | undefined} message - The main message content (max 60 characters).
+ * @property {string | undefined} currency - ISO 4217 currency code (e.g. 'CZK', 'EUR'). Defaults to 'CZK'.
  * @property {string | undefined} DT - Datum splatnosti (YYYYMMDD).
  * @property {string | undefined} VS - Variabilní symbol.
  * @property {string | undefined} SS - Specifický symbol.
  * @property {string | undefined} KS - Konstantní symbol.
  * @property {string | undefined} URL - The URL associated with the operation.
+ * @property {boolean | undefined} crc32 - When true, appends a SPAYD CRC32 checksum field.
  */
 export interface PaymentOptions {
   message?: string;
+  currency?: string;
   DT?: string;
   VS?: string;
   SS?: string;
   KS?: string;
   URL?: string;
+  crc32?: boolean;
 }
 
 export * from './QRPayment';

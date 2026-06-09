@@ -3,6 +3,7 @@ export const bankAccountNumberPattern = /^\d{2,10}$/;
 export const bankAccountPrefixPattern = /^\d{0,6}$/;
 export const bankAccountStringPattern = /^(\d{1,6}-)?(\d{2,10})\/\d{3,4}$/;
 export const dateYYYYMMDDPattern = /^(\d{4})(\d{2})(\d{2})$/;
+export const currencyPattern = /^[A-Z]{3}$/;
 
 export const isNumeric = (value: string): boolean => /^\d+$/.test(value);
 

@@ -1,10 +1,11 @@
-import { Account, Payment } from '../index';
+import { Account } from '../index';
 import { z } from 'zod';
 import {
   bankAccountBankCodePattern,
   bankAccountNumberPattern,
   bankAccountPrefixPattern,
   bankAccountStringPattern,
+  currencyPattern,
   isNumeric,
   isYYYYMMDDDate,
 } from './validators';
@@ -25,13 +26,17 @@ export const PaymentOptionsSchema = z.object({
     .string()
     .optional()
     .refine(
-      (message: string | undefined) => !message || !message.includes('*'),
-      "Message cannot contain the '*' character",
-    )
-    .refine(
       (message: string | undefined) => !message || message.length <= 60,
       'Message maximum length is 60',
     ),
+  currency: z
+    .string()
+    .optional()
+    .refine(
+      (val: string | undefined) => !val || currencyPattern.test(val),
+      'Currency has to be a 3-letter ISO 4217 code (e.g. CZK)',
+    ),
+  crc32: z.boolean().optional(),
   DT: z
     .string()
     .optional()
@@ -66,21 +71,15 @@ export const PaymentOptionsSchema = z.object({
     .refine((val: string | undefined) => !val || val.length <= 140, 'Maximum length is 140'),
 });
 
-export const PaymentSchema = z
-  .object({
-    amount: z
-      .number()
-      .min(0, 'Minimum value is 0')
-      .transform((amount: number) => amount.toFixed(2))
-      .refine((val: string) => val.length <= 10, 'Invalid amount')
-      .nullable(),
-  })
-  .transform(
-    (data): Payment => ({
-      ...data,
-      currency: 'CZK',
-    }),
-  );
+export const PaymentSchema = z.object({
+  amount: z
+    .number()
+    .min(0, 'Minimum value is 0')
+    .transform((amount: number) => amount.toFixed(2))
+    .refine((val: string) => val.length <= 10, 'Invalid amount')
+    .nullable(),
+  currency: z.string().default('CZK'),
+});
 
 export const AccountSchema = z
   .object({

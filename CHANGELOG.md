@@ -1,11 +1,24 @@
-
 # Change Log
+
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/)
-and this project adheres to [Semantic Versioning](http://semver.org/).
+The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased] - yyyy-mm-dd
+
+### Added
+
+- `currency` option (`CC`), defaulting to `CZK`, validated as a 3-letter ISO 4217 code
+- `crc32` option to append a SPAYD `CRC32` checksum field
+- `getDataUrl()` / `createQrPaymentDataUrl()` to render the QR code as a data URL
+- `createQrPaymentContent()` to obtain the raw SPAYD string
+
+### Changed
+
+- `MSG` and `X-URL` values are now percent-encoded (`*` → `%2A`, `%` → `%25`) instead of rejecting `*`
+- Package now ships only `dist/` via the `files` whitelist; `dist/` is no longer committed and is rebuilt on publish
+
+## [1.3.0] - 2026-06-09
 
 ### Fixed
 
