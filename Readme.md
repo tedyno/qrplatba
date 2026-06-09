@@ -1,12 +1,27 @@
-## @tedyno/cz-qr-payment
+<div align="center">
 
-[![npm version](https://img.shields.io/npm/v/@tedyno/cz-qr-payment.svg)](https://www.npmjs.com/package/@tedyno/cz-qr-payment) [![license](https://img.shields.io/npm/l/@tedyno/cz-qr-payment.svg)](./LICENSE)
+# @tedyno/cz-qr-payment
 
-### Description
+**Generate Czech 🇨🇿 SPAYD payment QR codes — from an account number to a scannable code in one call.**
 
-A simple and efficient npm package for generating **SPAYD** (Short Payment Descriptor) QR codes tailored for CZ 🇨🇿 payments. It builds the QR payment content (`SPD*1.0*…`) from the IBAN derived from a Czech account number and renders it as an SVG (or a data URL), providing an easy solution for generating payment QR codes compatible with Czech banking apps.
+[![npm version](https://img.shields.io/npm/v/@tedyno/cz-qr-payment.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/@tedyno/cz-qr-payment) [![bundle size](https://img.shields.io/bundlephobia/minzip/@tedyno/cz-qr-payment?label=min%2Bgzip)](https://bundlephobia.com/package/@tedyno/cz-qr-payment) [![types](https://img.shields.io/npm/types/@tedyno/cz-qr-payment.svg?logo=typescript)](https://www.typescriptlang.org/) [![license](https://img.shields.io/npm/l/@tedyno/cz-qr-payment.svg)](./LICENSE)
 
-### Installation
+### [▶ Live demo](https://tedyno.github.io/cz-qr-payment/)
+
+</div>
+
+---
+
+## Features
+
+- 🏦 Derives the **IBAN** from a Czech account number (with prefix and bank code) automatically.
+- 🧾 Builds spec-compliant **SPAYD** content (`SPD*1.0*…`) per [qr-platba.cz](https://qr-platba.cz/pro-vyvojare/specifikace-formatu/).
+- 🖼️ Renders to **SVG**, a **data URL**, or the **raw payload** string.
+- ⚙️ Optional fields: variable/specific/constant symbols, message, due date, currency, `CRC32`.
+- 🪶 Tiny footprint — a **single runtime dependency** (`qrcode-generator`).
+- 🟦 Written in **TypeScript** with full type definitions.
+
+## Installation
 
 ```bash
 npm install @tedyno/cz-qr-payment
@@ -16,30 +31,22 @@ yarn add @tedyno/cz-qr-payment
 bun add @tedyno/cz-qr-payment
 ```
 
-### Usage
-
-#### Using the class instance
+## Quick start
 
 ```js
 import { QRPayment } from '@tedyno/cz-qr-payment';
 
-const amount = 322.4; // 322.40 CZK
-const accountNumber = '19-2000145399/0800';
-const options = {
+const qrPayment = new QRPayment(322.4, '19-2000145399/0800', {
   VS: '126303', // Variable symbol
-  KS: '126303', // Constant symbol
-  SS: '126303', // Specific symbol
   message: 'Payment for order #126303', // Note (max 60 chars)
-};
+});
 
-const qrPayment = new QRPayment(amount, accountNumber, options);
-
-qrPayment.getSvg(); // SVG markup as a string
+qrPayment.getSvg(); // <svg …> markup as a string
 qrPayment.getDataUrl(); // data:image/gif;base64,… URL
-qrPayment.getQrContent(); // raw SPAYD string (SPD*1.0*…)
+qrPayment.getQrContent(); // SPD*1.0*ACC:CZ65…*CC:CZK*AM:322.40*MSG:…*X-VS:126303
 ```
 
-You can also pass the account as an object instead of a string:
+You can pass the account as an object instead of a string:
 
 ```js
 const qrPayment = new QRPayment(322.4, {
@@ -49,7 +56,11 @@ const qrPayment = new QRPayment(322.4, {
 });
 ```
 
-#### Using the helper functions
+> Pass `null` as the amount to omit the `AM` field (e.g. for an open-amount payment).
+
+## Helper functions
+
+If you don't need the instance, the one-shot helpers do the same in a single call:
 
 ```js
 import {
@@ -58,16 +69,22 @@ import {
   createQrPaymentContent,
 } from '@tedyno/cz-qr-payment';
 
-const amount = 322.4;
-const accountNumber = '19-2000145399/0800';
-const options = { VS: '126303', message: 'Payment for order #126303' };
-
-createQrPaymentSvg(amount, accountNumber, options); // SVG string
-createQrPaymentDataUrl(amount, accountNumber, options); // data URL
-createQrPaymentContent(amount, accountNumber, options); // raw SPAYD string
+createQrPaymentSvg(322.4, '19-2000145399/0800', { VS: '126303' }); // SVG string
+createQrPaymentDataUrl(322.4, '19-2000145399/0800', { VS: '126303' }); // data URL
+createQrPaymentContent(322.4, '19-2000145399/0800', { VS: '126303' }); // raw SPAYD string
 ```
 
-> Pass `null` as the amount to omit the `AM` field (e.g. for an open-amount payment).
+## API
+
+### `new QRPayment(amount, account, options?)`
+
+| Argument | Type | Description |
+| --- | --- | --- |
+| `amount` | `number \| null` | Amount in the chosen currency. `null` omits the `AM` field. |
+| `account` | `string \| Account` | Account string (`"19-2000145399/0800"`) or `{ prefix, number, bankCode }`. |
+| `options` | `PaymentOptions` | See the [Options](#options) table below. |
+
+**Instance methods:** `getSvg()`, `getDataUrl()`, `getQrContent()`. **Instance properties:** `account`, `payment`, `paymentOptions` (the validated, normalized values).
 
 ### Options
 
@@ -82,11 +99,27 @@ createQrPaymentContent(amount, accountNumber, options); // raw SPAYD string
 | `URL`      | `string`  | URL (`X-URL`). Up to 140 characters.                                  |
 | `crc32`    | `boolean` | When `true`, appends a `CRC32` checksum field to the payload.         |
 
-### QR Code Content Specifications
+### Validation
 
-The information used for creating the QR code content adheres to the specifications provided by [qr-platba.cz](https://qr-platba.cz/pro-vyvojare/specifikace-formatu/). It's important to note that this package was primarily developed for personal use cases and might not cover all potential scenarios. While efforts have been made to ensure compatibility, users are responsible for verifying and validating the correctness of the generated QR code content.
+Invalid input throws a `ValidationError` (exported from the package) with a descriptive message:
 
-### Development
+```js
+import { ValidationError } from '@tedyno/cz-qr-payment';
+
+try {
+  createQrPaymentContent(100, '19-2000145399/0800', { DT: '2024-01-01' });
+} catch (err) {
+  if (err instanceof ValidationError) {
+    console.error(err.message); // "DT has to be a valid date in YYYYMMDD format"
+  }
+}
+```
+
+## Specification & disclaimer
+
+The generated content follows the format described at [qr-platba.cz](https://qr-platba.cz/pro-vyvojare/specifikace-formatu/). This package was primarily built for personal use cases and may not cover every scenario. While efforts have been made to ensure compatibility, you are responsible for verifying the correctness of the generated QR codes for your own accounts.
+
+## Development
 
 This project uses [Bun](https://bun.sh).
 
@@ -97,6 +130,12 @@ bun run build    # compile TypeScript to dist/
 bun run lint     # check formatting with Prettier
 ```
 
-### Troubleshooting and Issues
+The live demo lives in [`docs/`](./docs) and is published to GitHub Pages from the `main` branch.
 
-If you encounter any troubles with the generated QR codes or have suggestions for improvements, please [create an issue](https://github.com/tedyno/cz-qr-payment/issues) on the GitHub repository page.
+## Issues
+
+Found a problem or have a suggestion? Please [open an issue](https://github.com/tedyno/cz-qr-payment/issues).
+
+## License
+
+[MIT](./LICENSE)
