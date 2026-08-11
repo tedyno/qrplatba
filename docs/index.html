@@ -6,7 +6,7 @@
     <title>QR platba generátor – SPAYD QR kód online | qrplatba</title>
     <meta
       name="description"
-      content="Generátor QR plateb (SPAYD) pro české bankovní účty. Zadej číslo účtu, částku, variabilní symbol a zprávu a vygeneruj QR kód k platbě. Zdarma, online, open-source."
+      content="Generátor QR plateb (SPAYD) pro české bankovní účty. Zadej číslo účtu nebo IBAN, částku, symboly, jméno příjemce a zprávu a vygeneruj QR kód k platbě. Zdarma, online, open-source."
     />
     <link rel="canonical" href="https://tedyno.github.io/qrplatba/" />
     <meta property="og:type" content="website" />
@@ -142,6 +142,21 @@
         border-radius: 8px;
         padding: 0.7rem;
       }
+      .checks {
+        margin-top: 0.9rem;
+      }
+      .checks label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text);
+        font-size: 0.85rem;
+        margin: 0.4rem 0 0;
+      }
+      .checks input {
+        width: auto;
+        accent-color: var(--accent);
+      }
       .error {
         color: var(--error);
         font-size: 0.85rem;
@@ -172,8 +187,12 @@
 
       <div class="grid">
         <section class="card">
-          <label for="account">Číslo účtu</label>
-          <input id="account" value="19-2000145399/0800" />
+          <label for="account">Číslo účtu nebo IBAN</label>
+          <input
+            id="account"
+            value="19-2000145399/0800"
+            placeholder="19-2000145399/0800 nebo CZ65 0800 …"
+          />
 
           <div class="row">
             <div>
@@ -197,8 +216,26 @@
             </div>
           </div>
 
+          <div class="row">
+            <div>
+              <label for="rn">Jméno příjemce</label>
+              <input id="rn" placeholder="Firma s.r.o." />
+            </div>
+            <div>
+              <label for="rf">Reference platby</label>
+              <input id="rf" placeholder="1234567890" />
+            </div>
+          </div>
+
           <label for="message">Zpráva pro příjemce</label>
           <input id="message" value="Platba za objednávku #126303" />
+
+          <div class="checks">
+            <label><input type="checkbox" id="crc32" /> Přidat CRC32 kontrolní součet</label>
+            <label
+              ><input type="checkbox" id="validateChecksum" /> Ověřit číslo účtu (ČNB mod-11)</label
+            >
+          </div>
 
           <div class="error" id="error"></div>
         </section>
@@ -220,9 +257,20 @@
         createQrPaymentSvg,
         createQrPaymentContent,
         ValidationError,
-      } from 'https://esm.sh/qrplatba@2';
+      } from 'https://esm.sh/qrplatba@2.2';
 
-      const fields = ['account', 'amount', 'currency', 'vs', 'dt', 'message'].reduce((acc, id) => {
+      const fields = [
+        'account',
+        'amount',
+        'currency',
+        'vs',
+        'dt',
+        'rn',
+        'rf',
+        'message',
+        'crc32',
+        'validateChecksum',
+      ].reduce((acc, id) => {
         acc[id] = document.getElementById(id);
         return acc;
       }, {});
@@ -239,7 +287,11 @@
           options.currency = fields.currency.value.trim().toUpperCase();
         if (fields.vs.value.trim()) options.VS = fields.vs.value.trim();
         if (fields.dt.value.trim()) options.DT = fields.dt.value.trim();
+        if (fields.rn.value.trim()) options.RN = fields.rn.value.trim();
+        if (fields.rf.value.trim()) options.RF = fields.rf.value.trim();
         if (fields.message.value.trim()) options.message = fields.message.value.trim();
+        if (fields.crc32.checked) options.crc32 = true;
+        if (fields.validateChecksum.checked) options.validateChecksum = true;
 
         try {
           const svg = createQrPaymentSvg(amount, fields.account.value.trim(), options);
