@@ -29,6 +29,7 @@
   "scripts": {
     "build": "bun run scripts/build.ts",
     "test": "bun test",
+    "smoke": "node scripts/smoke.mjs",
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "prepublishOnly": "npm run build"
@@ -38,8 +39,8 @@
   },
   "devDependencies": {
     "@types/bun": "^1.3.14",
-    "prettier": "^3.1.0",
-    "typescript": "^6.0.3"
+    "prettier": "^3.9.6",
+    "typescript": "^7.0.2"
   },
   "bugs": {
     "url": "https://github.com/tedyno/qrplatba/issues"

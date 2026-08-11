@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- `RN` (recipient name, max 35 chars) and `RF` (payment reference, max 16 digits) SPAYD fields
+- Czech IBAN accepted as the account input (normalized and verified against its check digits)
+- `validateChecksum` option and `hasValidAccountChecksum()` helper — opt-in ČNB mod-11 validation of the account prefix and number
+- `getIban()` exported as a standalone helper and as a `QRPayment` instance method
+- Node smoke test of the built `dist/` output (CJS + ESM) in CI
+
+### Fixed
+
+- Amounts of `Infinity` or `>= 1e21` no longer pass validation (`toFixed` produced `AM:Infinity` / `AM:1e+21` in the payload)
+- **`CRC32` is now computed over the canonical string required by the SPAYD spec** (header plus attributes sorted by key), instead of the emitted attribute order — previous checksums would fail spec-compliant validators, so payloads generated with `crc32: true` change
+- `MSG`, `RN` and `X-URL` length limits are now enforced on the percent-encoded value that is actually emitted, so an encoded field can no longer exceed its SPAYD maximum
+- Non-string `message`/`RN`/`URL` values and non-string/non-object account input now throw `ValidationError` instead of crashing later with a raw `TypeError`
+- `VS`/`SS`/`KS` accept an empty string (they are omitted from the payload), matching the documented "empty or digits" behavior
+
+### Changed
+
+- Account string input is trimmed of surrounding whitespace before parsing
+- Updated dev dependencies (Prettier 3.9, TypeScript 7)
+
 ## [2.1.1] - 2026-06-10
 
 ### Changed

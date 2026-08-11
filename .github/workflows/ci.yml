@@ -26,3 +26,12 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      # The test suite runs in Bun against the sources; this verifies the
+      # shipped dist/ output loads and works in plain Node (CJS + ESM).
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - name: Smoke test dist in Node
+        run: node scripts/smoke.mjs

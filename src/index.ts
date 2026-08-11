@@ -1,6 +1,14 @@
 export type AmountInput = number | null;
 export type BankAccountInput = Account | string;
-export type PaymentOptionsInput = PaymentOptions;
+
+/**
+ * Constructor options: all SPAYD payload fields plus behavioral switches
+ * that are consumed during validation and never stored on the instance.
+ */
+export type PaymentOptionsInput = PaymentOptions & {
+  /** When true, rejects accounts that fail the ČNB mod-11 checksum. */
+  validateChecksum?: boolean;
+};
 
 /**
  * Represents an account with specific details.
@@ -29,18 +37,22 @@ export interface Payment {
 /**
  * Represents options for a specific operation.
  * @interface PaymentOptions
- * @property {string | undefined} message - The main message content (max 60 characters).
+ * @property {string | undefined} message - The main message content (max 60 characters, percent-encoded).
  * @property {string | undefined} currency - ISO 4217 currency code (e.g. 'CZK', 'EUR'). Defaults to 'CZK'.
+ * @property {string | undefined} RN - Jméno příjemce (max 35 characters, percent-encoded).
+ * @property {string | undefined} RF - Reference platby pro příjemce (max 16 digits).
  * @property {string | undefined} DT - Datum splatnosti (YYYYMMDD).
  * @property {string | undefined} VS - Variabilní symbol.
  * @property {string | undefined} SS - Specifický symbol.
  * @property {string | undefined} KS - Konstantní symbol.
- * @property {string | undefined} URL - The URL associated with the operation.
+ * @property {string | undefined} URL - The URL associated with the operation (max 140 characters, percent-encoded).
  * @property {boolean | undefined} crc32 - When true, appends a SPAYD CRC32 checksum field.
  */
 export interface PaymentOptions {
   message?: string;
   currency?: string;
+  RN?: string;
+  RF?: string;
   DT?: string;
   VS?: string;
   SS?: string;

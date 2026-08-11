@@ -1,13 +1,7 @@
 import { Payment, PaymentOptions } from '../index';
 import qrcode from 'qrcode-generator';
 import { crc32Hex } from './crc32';
-
-/**
- * Percent-encodes the `%` and `*` characters so a value cannot break the
- * `*`-delimited SPAYD structure. Other characters (including diacritics and
- * URL punctuation such as `:` or `/`) are left intact.
- */
-const percentEncode = (value: string): string => value.replace(/%/g, '%25').replace(/\*/g, '%2A');
+import { percentEncode } from '../validation/transformators';
 
 export const generateQrContent = (
   iban: string,
@@ -23,8 +17,16 @@ export const generateQrContent = (
     content.set('AM', payment.amount);
   }
 
+  if (options.RN) {
+    content.set('RN', percentEncode(options.RN));
+  }
+
   if (options.message) {
     content.set('MSG', percentEncode(options.message));
+  }
+
+  if (options.RF) {
+    content.set('RF', options.RF);
   }
 
   if (options.VS) {
@@ -47,14 +49,31 @@ export const generateQrContent = (
     content.set('DT', options.DT);
   }
 
-  const spayd =
-    'SPD*1.0*' + [...content.entries()].map(([key, value]) => `${key}:${value}`).join('*');
+  const entries = [...content.entries()];
+  const spayd = buildSpayd(entries);
 
   if (options.crc32) {
-    return `${spayd}*CRC32:${crc32Hex(spayd)}`;
+    // Per the SPAYD spec the checksum is computed over a canonical string:
+    // the header followed by the attributes sorted by key (and secondarily
+    // by value), CRC32 itself excluded. The emitted attribute order is free.
+    const canonical = buildSpayd([...entries].sort(compareEntries));
+
+    return `${spayd}*CRC32:${crc32Hex(canonical)}`;
   }
 
   return spayd;
+};
+
+const buildSpayd = (entries: [string, string][]): string =>
+  'SPD*1.0*' + entries.map(([key, value]) => `${key}:${value}`).join('*');
+
+// Plain code-unit comparison — the canonical order must not depend on locale.
+const compareEntries = ([aKey, aValue]: [string, string], [bKey, bValue]: [string, string]) => {
+  if (aKey !== bKey) {
+    return aKey < bKey ? -1 : 1;
+  }
+
+  return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
 };
 
 const buildQrCode = (content: string) => {
